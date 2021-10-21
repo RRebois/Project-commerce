@@ -4,11 +4,21 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import *
 
+def func():
+    listings = listing.objects.all().order_by('item')
+    return listings
 
 def index(request):
-    return render(request, "auctions/index.html")
+    listing=func()
+    item_Not_On_Fire = itemToSell.objects.filter(onFire = 'False')
+    item_On_Fire = itemToSell.objects.filter(onFire = 'True')
+    return render(request, "auctions/index.html", {
+        "listing": listing,
+        "itemNoF": item_Not_On_Fire,
+        "itemoF": item_On_Fire
+    })
 
 
 def login_view(request):

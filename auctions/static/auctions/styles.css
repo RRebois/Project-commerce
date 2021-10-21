@@ -1,3 +1,200 @@
+@charset "UTF-8";
 body {
-    padding: 10px;
+  padding: 10px;
+  background: #ffe;
 }
+
+.grid {
+  display: grid;
+  grid-column-gap: 30px;
+  grid-template-columns: auto 60%;
+  border: 1px solid black;
+  min-height: 250px;
+  height: 350px;
+  /* To have a div max size */
+  position: relative;
+}
+
+.gridMid, .gridLeft {
+  text-align: center;
+  vertical-align: middle;
+}
+
+hr.new4 {
+  background-image: linear-gradient(to left, #e49a11 20%, #dba396 40%, #613226 50%, #dba396 60%, #e49a11 80%);
+  /*linear-gradient(to left, rgba(0, 0, 0, 1) 1%, rgba(0, 255, 255, 1) 50%, rgba(0, 0, 0, 1) 100%); */
+  /* 1 or more lines with the gradient colors, space between them*/
+  background-size: 100% 3px;
+  /* Size of the line itself 3px and how big according to the box*/
+  background-position: 0% 100%, 0% 0%;
+  /* wich side the line is */
+  background-repeat: no-repeat;
+}
+
+.gridLeft {
+  padding: 10px;
+  margin: 10px;
+  max-height: 400px;
+  /* To have a div max size that is smaller than the parent div*/
+  display: flex;
+  /* display and justify to center the image inside the div */
+  justify-content: center;
+}
+
+.gridMid {
+  padding: 20%;
+  margin: 10px;
+  position: relative;
+  /* To have a relative div so the spans inside (ex:foottext) will be easy to set wherever we want*/
+  max-height: 400px;
+  border: 1px solid black;
+}
+
+.parent img {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+.foottext {
+  color: #696969;
+  font-size: 11px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border: 1px dotted black;
+}
+
+.currentPrice2, .currentPrice, .priceSpan2, .priceSpan, .descriptionSpan2, .descriptionSpan, .titleSpan {
+  /* sets the background image and allows the gradient lines in my project*/
+  background-image: linear-gradient(to left, #ffffee 20%, #ea5332 40%, #f7350a 50%, #ea5332 60%, #ffffee 80%);
+  /*linear-gradient(to left, rgba(0, 0, 0, 1) 1%, rgba(0, 255, 255, 1) 50%, rgba(0, 0, 0, 1) 100%); */
+  /* 1 or more lines with the gradient colors, space between them*/
+  background-size: 100% 3px;
+  /* Size of the line itself 3px and how big according to the box*/
+  background-position: 0% 100%, 0% 0%;
+  /* wich side the line is */
+  background-repeat: no-repeat;
+  text-align: center;
+  width: 100%;
+  font-size: 16px;
+  justify-content: center;
+  /* To center the text inside the div */
+}
+
+.fireColor {
+  color: #e25822;
+}
+
+.imageBlur {
+  filter: blur(10px);
+  -webkit-filter: blur(10px);
+  -moz-filter: blur(10px);
+  -o-filter: blur(10px);
+  -ms-filter: blur(10px);
+  position: absolute;
+  left: 0px;
+  top: 50px;
+  width: 100%;
+  height: 300px;
+}
+
+.titleSpan {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-height: 50px;
+  font-size: 30px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.titleSpan a {
+  color: #353935;
+}
+.titleSpan a:hover {
+  text-shadow: 1px 1px 2px red, 0 0 1em blue, 0 0 0.2em blue;
+}
+
+.descriptionSpan {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  margin-bottom: 10px;
+  text-align: justify;
+  text-overflow: ellipsis;
+  /* ajoute ... au texte qui depasse de la zone horizontalement(clip, ellipsis, "-", "", ...etc),*/
+  overflow: hidden;
+  /* gère la manière dont le texte en plus est geré veeticalement(visible, hidden, scroll, auto, ...etc)*/
+  /*Below the display for more line than 1 line before ellipsis('...')*/
+  display: -webkit-box;
+  max-width: 100%;
+  height: 180px;
+  -webkit-line-clamp: 7;
+  /* Number of lines to show*/
+  -webkit-box-orient: vertical;
+  line-height: 1.625;
+  white-space: pre-wrap;
+  /* Comment sont gérés les blancs (espaces, saut de ligne etc..), usefull for a 1 line ellipsis*/
+}
+
+.currentPrice2, .priceSpan2, .descriptionSpan2 {
+  color: white;
+}
+
+.descriptionSpan2 {
+  position: absolute;
+  top: 50px;
+  left: 0;
+  margin-bottom: 10px;
+  text-align: justify;
+  text-overflow: ellipsis;
+  /* ajoute ... au texte qui depasse de la zone horizontalement(clip, ellipsis, "-", "", ...etc),*/
+  overflow: hidden;
+  /* gère la manière dont le texte en plus est geré veeticalement(visible, hidden, scroll, auto, ...etc)*/
+  /*Below the display for more line than 1 line before ellipsis('...')*/
+  display: -webkit-box;
+  max-width: 100%;
+  height: 180px;
+  -webkit-line-clamp: 7;
+  /* Number of lines to show*/
+  -webkit-box-orient: vertical;
+  line-height: 1.625;
+  white-space: pre-wrap;
+  /* Comment sont gérés les blancs (espaces, saut de ligne etc..), usefull for a 1 line ellipsis*/
+}
+
+.priceSpan {
+  position: absolute;
+  top: 230px;
+  left: 0;
+  height: 30px;
+}
+
+.priceSpan2 {
+  position: absolute;
+  top: 230px;
+  left: 0;
+  height: 30px;
+}
+
+.currentPrice {
+  position: absolute;
+  top: 260px;
+  left: 0;
+  height: 30px;
+}
+
+.currentPrice2 {
+  position: absolute;
+  top: 260px;
+  left: 0;
+  height: 30px;
+}
+
+.fire {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/*# sourceMappingURL=styles.css.map */
