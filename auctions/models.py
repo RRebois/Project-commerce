@@ -1,11 +1,13 @@
 from django.contrib.auth.models import AbstractUser
 from djmoney.models.fields import MoneyField
 from django.db import models
+from django import forms
 
 #from countdowntimer_model.models import CountdownTimer
 #Ithink I do not need the class listing (redundant)
 
 #default=timezone.now
+
 class User(AbstractUser):
     itemsWon = models.IntegerField(default=0, verbose_name="bids won")
     messagesPosted = models.IntegerField(default=0, verbose_name="Total comments posted")
@@ -24,7 +26,7 @@ class category(models.Model):
         ordering = ['category']
 
     def __str__(self):
-        return f"{self.id}: {self.category}"
+        return f"{self.category}"
 
 class itemToSell(models.Model):
     #id primary key, autoincrement is created automatically
@@ -35,20 +37,20 @@ class itemToSell(models.Model):
     updates = models.IntegerField(default = 0)
     onFire = models.BooleanField(default = False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Seller")
-    category =models.ForeignKey(category, on_delete=models.CASCADE, default="Others", null=True, blank=True)
+    category = models.ForeignKey(category, on_delete=models.CASCADE, null=True, blank=True)
     image_url = models.URLField(null=True, blank=True)
 
     class Meta:
         ordering = ['title']
 
     def __str__(self):
-        return f"{self.id}: {self.title} - {self.description} Auction created on {self.date_created.day}-{self.date_created.month}-\
+        return f"{self.id}: {self.title} Auction created on {self.date_created.day}-{self.date_created.month}-\
 {self.date_created.year} at {self.date_created.hour}:{self.date_created.minute}:{self.date_created.second} \
 in the category {self.category}. updated {self.updates} times."
 
 class watchlist(models.Model):
     watch = models.BooleanField(default=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     item = models.ForeignKey(itemToSell, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -57,17 +59,17 @@ class watchlist(models.Model):
 class bid(models.Model):
     price = MoneyField(blank = False, verbose_name="Price", decimal_places=2, default_currency='USD', max_digits=11)
     current = MoneyField(verbose_name="current bid", default=None, decimal_places=2, default_currency='USD', max_digits=11, blank=True, null=True)
-    userSelling = models.ForeignKey(User, on_delete=models.CASCADE, default=None, related_name="Seller", verbose_name="Seller")
+    userSelling = models.ForeignKey(User, on_delete=models.CASCADE, related_name="Seller", verbose_name="Seller")
     userWinning = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="Winner", null=True, verbose_name="Actual buyer", blank=True)
-    item = models.ForeignKey(itemToSell, on_delete=models.CASCADE, verbose_name="Item sold", default=None)
+    item = models.ForeignKey(itemToSell, on_delete=models.CASCADE, verbose_name="Item sold")
     count = models.IntegerField(default = 0)
 
     def __str__(self):
         return f"Price = {self.price} on item {self.item.title} by user {self.userSelling}."
 
 class comment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    comment = models.TextField(default = "comment")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.TextField(blank=True, null=True)
     item = models.ForeignKey(itemToSell, on_delete = models.CASCADE)
     datePosted = models.DateTimeField(auto_now_add=True)
     dateUpdated = models.DateTimeField(blank=True, null=True)
@@ -76,15 +78,12 @@ class comment(models.Model):
         return f"comment {self.comment} on item {self.item.title} by user {self.user.username} posted on {self.datePosted}"
 
 class listing(models.Model):
-    category = models.ForeignKey(category, on_delete=models.CASCADE, blank=True, null=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
-    bid = models.ForeignKey(bid, on_delete=models.CASCADE, blank=True, null=True)
-    comment = models.ForeignKey(comment, on_delete=models.CASCADE, blank=True, null=True)
-    item = models.ForeignKey(itemToSell, on_delete=models.CASCADE, default=None)
+    bid = models.ForeignKey(bid, on_delete=models.CASCADE)
+    item = models.ForeignKey(itemToSell, on_delete=models.CASCADE)
     active = models.BooleanField(default = True)
 
     def __str__(self):
-        return f"{self.category}, {self.user}, {self.item}, {self.bid}, {self.comment}"
+        return f"{self.item.category}, {self.item.user}, {self.item}, {self.bid}"
     
     class Meta:
         ordering = ['-active']

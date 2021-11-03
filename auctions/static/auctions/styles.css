@@ -7,7 +7,7 @@ body {
 .grid {
   display: grid;
   grid-column-gap: 30px;
-  grid-template-columns: auto 60%;
+  grid-template-columns: auto 1% 60%;
   border: 1px solid black;
   min-height: 250px;
   height: 350px;
@@ -15,7 +15,16 @@ body {
   position: relative;
 }
 
-.gridMid, .gridLeft {
+@media (max-width: 992px) {
+  .grid {
+    grid-template-columns: auto;
+  }
+
+  .gridRight {
+    height: 100%;
+  }
+}
+.gridRight, .gridMid, .gridLeft {
   text-align: center;
   vertical-align: middle;
 }
@@ -34,7 +43,7 @@ hr.new4 {
 .gridLeft {
   padding: 10px;
   margin: 10px;
-  max-height: 400px;
+  max-height: 330px;
   /* To have a div max size that is smaller than the parent div*/
   display: flex;
   /* display and justify to center the image inside the div */
@@ -42,12 +51,16 @@ hr.new4 {
 }
 
 .gridMid {
-  padding: 20%;
+  margin: 10px;
+  border: 1px solid black;
+}
+
+.gridRight {
   margin: 10px;
   position: relative;
   /* To have a relative div so the spans inside (ex:foottext) will be easy to set wherever we want*/
-  max-height: 400px;
-  border: 1px solid black;
+  max-height: 330px;
+  border: 2px solid black;
 }
 
 .parent img {
@@ -61,7 +74,6 @@ hr.new4 {
   position: absolute;
   bottom: 0;
   right: 0;
-  border: 1px dotted black;
 }
 
 .currentPrice2, .currentPrice, .priceSpan2, .priceSpan, .descriptionSpan2, .descriptionSpan, .titleSpan {

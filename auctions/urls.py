@@ -7,5 +7,6 @@ urlpatterns = [
     path("login", views.login_view, name="login"),
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
-    path("create", vierws.create, name="create")
+    path("create", views.create, name="create"),
+    path("create/<str:word>", views.itemPage, name="itemPage"),
 ]

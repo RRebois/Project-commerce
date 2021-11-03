@@ -5,12 +5,20 @@ body {
 .grid {
     display: grid;
     grid-column-gap: 30px;
-    grid-template-columns: auto 60%;
+    grid-template-columns: auto 1% 60%;
     border: 1px solid black;
     min-height: 250px;
     height: 350px; /* To have a div max size */
     position: relative;
 }
+@media(max-width: 992px) {
+    .grid {
+        grid-template-columns: auto;
+    }
+    .gridRight {
+        height: 100%;
+    }
+  }
 %grid-item {
     text-align: center;
     vertical-align: middle;
@@ -27,18 +35,21 @@ hr.new4 {
     @extend %grid-item;
     padding:10px;
     margin: 10px;
-    max-height: 400px; /* To have a div max size that is smaller than the parent div*/
+    max-height: 330px; /* To have a div max size that is smaller than the parent div*/
     display: flex;/* display and justify to center the image inside the div */
     justify-content: center;
 }
-
 .gridMid {
     @extend %grid-item;
-    padding:20%;
+    margin:10px;
+    border: 1px solid black;
+}
+.gridRight {
+    @extend %grid-item;
     margin: 10px;
     position: relative; /* To have a relative div so the spans inside (ex:foottext) will be easy to set wherever we want*/
-    max-height: 400px;
-    border:1px solid black;
+    max-height: 330px;
+    border:2px solid black;
 }
 .parent img {
     max-height: 100%;
@@ -48,7 +59,6 @@ hr.new4 {
     color: #696969;
     font-size: 11px;
     position: absolute; bottom:0; right:0;
-    border: 1px dotted black;
 }
 %activelisting{
     /* sets the background image and allows the gradient lines in my project*/

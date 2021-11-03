@@ -2,8 +2,29 @@
 
 {% block title %} 
     Create listing
-{% ednblock %}
+{% endblock %}
 
 {% block body %} 
-
+<h5>Create a new auction:</h5>
+    <div>
+        <form action="{% url 'create' %}" method="POST"></br>
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="fieldWrapper form-group" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
+                    {{ field.label_tag }}{% if field.field.required %}<span class="required">*</span>{% endif %}
+                    {{field}}
+                </div>
+            {% endfor %}
+                <select name="category">
+                    <option selected="selected" value="">
+                        No category
+                        </option>
+                    {% for category in categories %}
+                        <option value="{{ category }}">{{ category }}</option>
+                    {% endfor %}
+                </select>
+            <button type="submit" class="btn btn-primary">Submit</button>
+            
+          </form>
+    </div>
 {% endblock %}

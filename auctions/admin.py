@@ -17,7 +17,7 @@ class bidAdmin(admin.ModelAdmin):
     list_display = ("id", "price", "userSelling", "current", "userWinning", "item", "count")
 
 class commentAdmin(admin.ModelAdmin):
-    list_display = ("id", "item", "user", "comment", "datePosted")
+    list_display = ("id", "item", "user")
 
 # Register your models here.
 admin.site.register(User, userAdmin)
