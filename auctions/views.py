@@ -1,10 +1,12 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.core.exceptions import ObjectDoesNotExist
+
 import datetime
 
 from .models import *
@@ -77,7 +79,8 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
-def create(request):
+@login_required(login_url='login') #@login_required empêche les personnes non connectés d'acceder à la page demandés
+def create(request): #login_url permet de redigirer vers une autre url, ici on redirige vers la page de connexion login
     if request.method == "POST":
         title = request.POST["title"]
         description = request.POST["description"]
@@ -98,11 +101,11 @@ def create(request):
                     image_url=image_url)
             #print(f"category:{category_id}")
         
-        newprice = bid.objects.create(price=price, item=itemToSell.objects.all().last(), userSelling=User.objects.get(pk=username))
-        newListing = listing.objects.create(item=itemToSell.objects.all().last(), bid=bid.objects.all().last())
+        newprice = bid.objects.create(price=price, item=itemToSell.objects.get(pk=newItem.id), userSelling=User.objects.get(pk=username))
+        newListing = listing.objects.create(item=itemToSell.objects.get(pk=newItem.id), bid=bid.objects.get(pk=newprice.id))
 
-        messages.success( request, 'Your item has been successfully added to the listing.')
-        return HttpResponseRedirect(reverse("itemPage", args=(title,)))
+        messages.success(request, 'Your item has been successfully added to the listing.')
+        return HttpResponseRedirect(reverse("itemPage", args=(newItem.id, title)))
     
     categories = category.objects.all()
     return render(request, "auctions/create.html", {
@@ -110,17 +113,60 @@ def create(request):
         "categories": categories
     })
 
-def itemPage(request, word):
-    itemTitle=itemToSell.objects.get(title=word)
+@login_required(login_url='login')
+def itemPage(request, item_id, word):
+    if request.method == "POST":
+        # Get the title of the listing item:
+        title=itemToSell.objects.get(pk=item_id)
+        bids = bid.objects.get(item=item_id)
+
+        # To make a bid:
+        if 'makeBid' in request.POST:
+            # Take in the data the user submitted and save it as form
+            dataBid = bidForm(request.POST)
+            print(f"dataBid valid:{dataBid}")
+            # Check if form data is valid (server-side)
+            if dataBid.is_valid():
+                print(f"dataBid valid:{dataBid}")
+            # Isolate the task from the 'cleaned' version of form data
+                newBid = form.cleaned_data["bid"]
+                print(f"data cleaned:{newBid}")
+                return HttpResponseRedirect(reverse("itemPage", args=(item_id, title)))
+
+
+
+        # To close the current auction
+        if 'close' in request.POST:
+            listings = listing.objects.get(item=item_id)
+            listings.active = "False"
+            listings.save()
+            #print(f"The title sent is: {word} and the id is {title_id}")
+
+            if bids.current:
+                messages.success(request, 'You successfully closed your auction and sold your item, Congratulations!!!')
+                return HttpResponseRedirect(reverse("itemPage", args=(item_id, title)))
+            else:
+                messages.success(request, 'You successfully closed your auction.')
+                return HttpResponseRedirect(reverse("itemPage", args=(item_id, title)))
+
+    itemTitle=itemToSell.objects.get(pk=item_id)
+    bidTitle=bid.objects.get(item=item_id)
+    listings=listing.objects.get(item=item_id)
 
     try:
-        coms=comment.objects.get(item=itemTitle.id)
+        coms=comment.objects.get(item=item_id)
     except ObjectDoesNotExist:
         return render(request, "auctions/itemPage.html", {
-        "item": itemTitle
+        "item": itemTitle,
+        "bid": bidTitle,
+        "bidForm": bidForm(),
+        "listing": listings
         })
 
     return render(request, "auctions/itemPage.html", {
         "item": itemTitle,
-        "comment": coms
+        "comment": coms,
+        "bid": bidTitle,
+        "bidForm": bidForm(),
+        "listing": listings
     })

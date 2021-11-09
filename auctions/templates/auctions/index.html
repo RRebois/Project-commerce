@@ -27,12 +27,14 @@
                         </div>
                         <div class="gridMid d-none d-lg-block"></div>
                         <div class="gridRight">
-                            <span class="titleSpan"><strong><a href=''><img src="static/auctions/images/fire.jpeg" alt="fire" width="20px"> {{list.item.title}}</a></strong></span>
+                            <span class="titleSpan"><strong><a href="{% url 'itemPage' list.item.id list.item.title %}">
+                                <img src="static/auctions/images/fire.jpeg" alt="fire" width="20px"> 
+                                {{list.item.title}}</a></strong></span>
                             <span class="descriptionSpan">{{list.item.description}}</span>
-                            <span class="priceSpan">Initial price: {{list.bid.price}}</span>
+                            <span class="priceSpan">Starting price: {{list.bid.price}}</span>
                             <span class="currentPrice">
-                            {% if bid.current != None %}
-                                current price: {{bid.current}}
+                            {% if list.bid.current %}
+                                current price: {{list.bid.current}}
                             {% else %}
                                 Nobody bid on this article yet. 
                             {% endif %}
@@ -62,12 +64,13 @@
                         <div class="gridMid d-none d-lg-block">
                         </div>
                         <div class="gridRight">
-                            <span class="titleSpan"><strong><a href=''>{{list.item.title}}</a></strong></span>
+                            <span class="titleSpan"><strong><a href="{% url 'itemPage' list.item.id list.item.title %}">
+                                {{list.item.title}}</a></strong></span>
                             <span class="descriptionSpan">{{list.item.description}}</span>
-                            <span class="priceSpan">Initial price: {{list.bid.price}}</span>
+                            <span class="priceSpan">Starting price: {{list.bid.price}}</span>
                             <span class="currentPrice">
-                            {% if bid.current != None %}
-                                current price: {{bid.current}}
+                            {% if list.bid.current != None %}
+                                current price: {{list.bid.current}}
                             {% else %}
                                 Nobody bid on this article yet. 
                             {% endif %}
@@ -100,9 +103,10 @@
                             </div>
                             <div class="gridMid d-none d-lg-block"></div>
                             <div class="gridRight">
-                                <span class="titleSpan"><strong><img src="static/auctions/images/fire.jpeg" alt="fire" width="20px"> {{list.item.title}}</strong></span>
+                                <span class="titleSpan"><strong><img src="static/auctions/images/fire.jpeg" alt="fire" width="20px"> 
+                                    {{list.item.title}}</strong></span>
                                 <span class="descriptionSpan2">To see more about this hot deal, please register to the website for <strong>free</strong></span>
-                                <span class="priceSpan2">Initial price: ??</span>
+                                <span class="priceSpan2">Starting price: ??</span>
                                 <span class="currentPrice2">
                                 ??
                                 </span>
@@ -131,9 +135,9 @@
                         </div>
                         <div class="gridMid d-none d-lg-block"></div>
                         <div class="gridRight">
-                            <span class="titleSpan"><strong><a href=''>{{list.item.title}}</a></strong></span>
+                            <span class="titleSpan"><strong>{{list.item.title}}</strong></span>
                             <span class="descriptionSpan">{{list.item.description}}</span>
-                            <span class="priceSpan">Initial price: {{list.bid.price}}</span>
+                            <span class="priceSpan">Starting price: {{list.bid.price}}</span>
                             <span class="currentPrice">
                             {% if bid.current != None %}
                                 current price: {{bid.current}}

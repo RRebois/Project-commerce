@@ -33,8 +33,6 @@ class itemToSell(models.Model):
     title = models.CharField(max_length = 128, default = "title")
     description = models.TextField(default = "description")
     date_created = models.DateTimeField(auto_now_add=True)
-    date_updated = models.DateTimeField(blank=True, null=True)
-    updates = models.IntegerField(default = 0)
     onFire = models.BooleanField(default = False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Seller")
     category = models.ForeignKey(category, on_delete=models.CASCADE, null=True, blank=True)
@@ -46,7 +44,7 @@ class itemToSell(models.Model):
     def __str__(self):
         return f"{self.id}: {self.title} Auction created on {self.date_created.day}-{self.date_created.month}-\
 {self.date_created.year} at {self.date_created.hour}:{self.date_created.minute}:{self.date_created.second} \
-in the category {self.category}. updated {self.updates} times."
+in the category {self.category}."
 
 class watchlist(models.Model):
     watch = models.BooleanField(default=False)
@@ -72,10 +70,11 @@ class comment(models.Model):
     comment = models.TextField(blank=True, null=True)
     item = models.ForeignKey(itemToSell, on_delete = models.CASCADE)
     datePosted = models.DateTimeField(auto_now_add=True)
-    dateUpdated = models.DateTimeField(blank=True, null=True)
-
     def __str__(self):
         return f"comment {self.comment} on item {self.item.title} by user {self.user.username} posted on {self.datePosted}"
+    
+    class Meta:
+        ordering = ['datePosted']
 
 class listing(models.Model):
     bid = models.ForeignKey(bid, on_delete=models.CASCADE)

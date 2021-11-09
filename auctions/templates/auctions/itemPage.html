@@ -5,5 +5,142 @@
 {% endblock %}
 
 {% block body %}
-    {{item}}
+{% if message %}
+    {{message}}
+{% endif %}
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-success" role="alert">
+            {{message}}
+        </div>    
+    {% endfor %}
+{% endif %}
+    <h2>{{item.title}}</h2>
+    <form>
+        <input type="button" value="watchlist" class="btn btn-primary">
+    </form>
+    
+    {% if item.image_url %}
+        <div class="box">
+            <div class="parent imgItemPage">
+                <img src="{{ item.image_url }}">
+            </div>
+        </div>
+    {% else %}
+        <div class="box">
+            <div class="parent imgItemPage"> 
+                <img src="/static/auctions/images/NoPicAvailable.png" alt="No picture available">
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="box">
+        <div>
+            {{item.description}}
+        </div>
+    </div>
+
+    <div class="box">
+        {% if bid.userSelling == request.user %}
+            {% if bid.current%}
+                Great news, someone bid on your item! Feel free to close the auction whenever you want to claim your money.</br>
+                initial price: <h5>{{bid.price}}</h5>
+                Current price: <h5>{{bid.current}}</h5>
+                {% if listing.active == True %}
+                    <form action="{% url 'itemPage' item.id item.title%}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary" name="close">Close auction</button>
+                    </form>
+                {% endif %}
+            {% else %}
+                No bid on your auction so far. Be patient, someone might be interested in your item in the future! 
+                <h4>initial price: {{bid.price}}</h4>
+                {% if listing.active == True %}
+                    <form action="{% url 'itemPage' item.id item.title%}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary" name="close">Close auction</button>
+                    </form>
+                {% endif %}
+            {% endif %}
+        {% elif bid.userWinning == request.user %}
+                <h4>Current price: <strong>{{bid.current}}</strong></h4>
+                {{bid.count}} bid(s) so far. Your bid is the current bid.
+                <form action="{% url 'itemPage' item.id item.title%}" method="POST">
+                    {% csrf_token %}
+                    {% for field in bidForm%}
+                        {{field}}
+                    {% endfor %}
+                </br>
+                    <button type="submit" class="btn btn-primary" name="makeBid">Bid</button>
+                </form>
+        {% else %}
+            {% if bid.current %}
+                <h4>Current price: <strong>{{bid.current}}</strong></h4>
+                {{bid.count}} bid(s) so far. Someone else is currently winning this bid.
+                <form action="{% url 'itemPage' item.id item.title %}" method="POST">
+                    {% csrf_token %}
+                    {% for field in bidForm%}
+                        {{field}}
+                    {% endfor %}
+                </br>
+                    <button type="submit" class="btn btn-primary" name="makeBid">Bid</button>
+                </form>
+            {% else %}
+                <h4>initial price: {{bid.price}}</h4>
+                Nobody bid on this article yet. Be the first one!
+                <form>
+                    {% for field in bidForm%}
+                        {{field}}
+                    {% endfor %}
+                </br>
+                    <input type="button" value="Bid" class="btn btn-primary">
+                </form>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <div class="box">
+        <h3>Details:</h3>
+            <ul>
+                <li>
+                    Listed by: {{bid.userSelling}}
+                </li>
+                {% if item.category != None %}
+                <li>
+                    Category: {{item.category}}
+                </li>
+                {% else %}
+                <li>
+                    Category: No category Listed
+                </li>
+                {% endif %}
+            </ul>
+    </div>
+
+    {% if not comment %}
+        <div class="box">
+            <form>
+                <textarea>Write a comment...</textarea>
+                <input type="button" value="Comment" class="btn btn-primary">
+            </form>
+        </div>
+    {% else %}
+        <div class="box">
+            <form>
+                <textarea>Write a comment...</textarea>
+                <input type="button" value="Comment" class="btn btn-primary">
+            </form>
+        </div>
+        {% for comment in comment %}
+            <div class="commentBox">
+                <div class="comment">
+                    {{comment.comment}}
+                </div>
+                <div class="foottext">
+                    Comment posted on {{comment.datePosted}} by {{comment.user}}.
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
 {% endblock %}

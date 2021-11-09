@@ -10,3 +10,7 @@ class newListingForm (forms.Form):
     price = forms.DecimalField(required = True, max_digits='10', 
         widget=forms.NumberInput(attrs={'placeholder': 'initial Price', 'class':'form-control', 'step': 0.01, 'min':1.00, 'max':100000.00}))
     image_url = forms.URLField(required = False, widget=forms.TextInput(attrs={'placeholder': 'url (optional)', 'class':'form-control'}))
+
+class bidForm (forms.Form):
+    bid = forms.DecimalField(required = True, max_digits='10', 
+        widget=forms.NumberInput(attrs={'placeholder': 'bid', 'class':'form-control', 'step': 0.01, 'min':1.00, 'max':100000.00}))
