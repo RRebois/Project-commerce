@@ -82,30 +82,36 @@ def register(request):
 @login_required(login_url='login') #@login_required empêche les personnes non connectés d'acceder à la page demandés
 def create(request): #login_url permet de redigirer vers une autre url, ici on redirige vers la page de connexion login
     if request.method == "POST":
-        title = request.POST["title"]
-        description = request.POST["description"]
-        price = request.POST["price"]
-        username = request.user.id
 
-        image_url = request.POST["image_url"]
+        # Take in the data the user submitted and save it as form
+        dataForm = newListingForm(request.POST)
+        # Check if form data is valid (server-side)
+        if dataForm.is_valid():
+            # Isolate the task from the 'cleaned' version of form data
+            title = dataForm.cleaned_data["title"]
+            description = dataForm.cleaned_data["description"]
+            price = dataForm.cleaned_data["price"]
+            username = request.user.id
 
-        print(f"username:{username}")
-        # Try finding the category id from the submitted form data if any selected
-        try:
-            category_id = category.objects.get(category=request.POST["category"]).id
-            newItem = itemToSell.objects.create(title=title, description=description, user=User.objects.get(pk=username), 
-                    category=category.objects.get(pk=category_id), image_url=image_url)
-            #print(f"category:{category_id}")
-        except ObjectDoesNotExist:
-            newItem = itemToSell.objects.create(title=title, description=description, user=User.objects.get(pk=username), 
-                    image_url=image_url)
-            #print(f"category:{category_id}")
-        
-        newprice = bid.objects.create(price=price, item=itemToSell.objects.get(pk=newItem.id), userSelling=User.objects.get(pk=username))
-        newListing = listing.objects.create(item=itemToSell.objects.get(pk=newItem.id), bid=bid.objects.get(pk=newprice.id))
+            image_url = dataForm.cleaned_data["image_url"]
 
-        messages.success(request, 'Your item has been successfully added to the listing.')
-        return HttpResponseRedirect(reverse("itemPage", args=(newItem.id, title)))
+            # print(f"username:{username}")
+            # Try finding the category id from the submitted form data if any selected
+            try:
+                category_id = category.objects.get(category=request.POST["category"]).id
+                newItem = itemToSell.objects.create(title=title, description=description, user=User.objects.get(pk=username), 
+                        category=category.objects.get(pk=category_id), image_url=image_url)
+                #print(f"category:{category_id}")
+            except ObjectDoesNotExist:
+                newItem = itemToSell.objects.create(title=title, description=description, user=User.objects.get(pk=username), 
+                        image_url=image_url)
+                #print(f"category:{category_id}")
+            
+            newprice = bid.objects.create(price=price, item=itemToSell.objects.get(pk=newItem.id), userSelling=User.objects.get(pk=username))
+            newListing = listing.objects.create(item=itemToSell.objects.get(pk=newItem.id), bid=bid.objects.get(pk=newprice.id))
+
+            messages.success(request, 'Your item has been successfully added to the listing.')
+            return HttpResponseRedirect(reverse("itemPage", args=(newItem.id, title)))
     
     categories = category.objects.all()
     return render(request, "auctions/create.html", {
@@ -120,20 +126,62 @@ def itemPage(request, item_id, word):
         title=itemToSell.objects.get(pk=item_id)
         bids = bid.objects.get(item=item_id)
 
+        if 'watchlist' in request.POST:
+            watch = watchlist.objects.get(item=itemToSell.objects.get(pk=item_id), user=User.objects.get(pk=request.user.id))
+            if watch.watch:
+                watch.watch = "False"
+                watch.save()
+                messages.success(request, 'Item removed from watchlist.')
+                return HttpResponseRedirect(reverse("itemPage", args=(item_id, title)))
+            else:
+                watch.watch = "True"
+                watch.save()
+                messages.success(request, 'Item added to watchlist.')
+                return HttpResponseRedirect(reverse("itemPage", args=(item_id, title)))
+
+
         # To make a bid:
         if 'makeBid' in request.POST:
             # Take in the data the user submitted and save it as form
             dataBid = bidForm(request.POST)
-            print(f"dataBid valid:{dataBid}")
             # Check if form data is valid (server-side)
             if dataBid.is_valid():
-                print(f"dataBid valid:{dataBid}")
-            # Isolate the task from the 'cleaned' version of form data
-                newBid = form.cleaned_data["bid"]
-                print(f"data cleaned:{newBid}")
-                return HttpResponseRedirect(reverse("itemPage", args=(item_id, title)))
+                # Isolate the task from the 'cleaned' version of form data
+                newBid = dataBid.cleaned_data["bid"]
+                
+                # Get the initial and current prices:
+                initialPrice=bids.price
+                currentPrice=bids.current
 
+                if not currentPrice:
+                    if newBid < initialPrice.amount:
+                        messages.warning(request, 'Error: The minimum bid must match the initial price.')
+                        return HttpResponseRedirect(reverse("itemPage", args=(item_id, title)))
+                
+                    bids.current=newBid
+                    bids.userWinning=User.objects.get(pk=request.user.id)
+                    bids.count = bids.count + 1 
+                    bids.save()
 
+                    messages.success(request, 'Bid placed successfully. Good luck!')
+                    return HttpResponseRedirect(reverse("itemPage", args=(item_id, title)))
+
+                else:
+                    if newBid <= currentPrice.amount:
+                        messages.warning(request, 'Error: Your bid must be higher.')
+                        return HttpResponseRedirect(reverse("itemPage", args=(item_id, title)))
+
+                    bids.current=newBid
+                    bids.userWinning=User.objects.get(pk=request.user.id)
+                    bids.count = bids.count + 1 
+                    bids.save()
+
+                    if bids.count > 5:
+                        title.onFire = "True"
+                        title.save()
+
+                    messages.success(request, 'Bid placed successfully. Good luck!')
+                    return HttpResponseRedirect(reverse("itemPage", args=(item_id, title)))
 
         # To close the current auction
         if 'close' in request.POST:
@@ -154,13 +202,19 @@ def itemPage(request, item_id, word):
     listings=listing.objects.get(item=item_id)
 
     try:
+        watch = watchlist.objects.get(item=itemToSell.objects.get(pk=item_id), user=User.objects.get(pk=request.user.id))
+    except ObjectDoesNotExist:
+        watch = watchlist.objects.create(item=itemToSell.objects.get(pk=item_id), user=User.objects.get(pk=request.user.id))
+
+    try:
         coms=comment.objects.get(item=item_id)
     except ObjectDoesNotExist:
         return render(request, "auctions/itemPage.html", {
         "item": itemTitle,
         "bid": bidTitle,
         "bidForm": bidForm(),
-        "listing": listings
+        "listing": listings,
+        "watch": watch
         })
 
     return render(request, "auctions/itemPage.html", {
@@ -168,5 +222,6 @@ def itemPage(request, item_id, word):
         "comment": coms,
         "bid": bidTitle,
         "bidForm": bidForm(),
-        "listing": listings
+        "listing": listings,
+        "watch": watch
     })

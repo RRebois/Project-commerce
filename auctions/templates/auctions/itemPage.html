@@ -10,16 +10,28 @@
 {% endif %}
 {% if messages %}
     {% for message in messages %}
-        <div class="alert alert-success" role="alert">
-            {{message}}
-        </div>    
+        {% if message.tags %}
+            <div class="alert alert-{{message.tags}}" role="alert">
+                {{message}}
+            </div>  
+        {% endif %}  
     {% endfor %}
 {% endif %}
+
     <h2>{{item.title}}</h2>
-    <form>
-        <input type="button" value="watchlist" class="btn btn-primary">
-    </form>
-    
+
+    {% if watch.watch %}
+        <form action="{% url 'itemPage' item.id item.title %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" name="watchlist" class="btn btn-primary">Remove from watchlist</button>
+        </form>
+    {% else %}
+        <form action="{% url 'itemPage' item.id item.title %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" name="watchlist" class="btn btn-secondary">Add to watchlist</button>
+        </form>
+    {% endif %}
+
     {% if item.image_url %}
         <div class="box">
             <div class="parent imgItemPage">
@@ -88,12 +100,13 @@
             {% else %}
                 <h4>initial price: {{bid.price}}</h4>
                 Nobody bid on this article yet. Be the first one!
-                <form>
+                <form action="{% url 'itemPage' item.id item.title %}" method="POST">
+                    {% csrf_token %}
                     {% for field in bidForm%}
                         {{field}}
                     {% endfor %}
                 </br>
-                    <input type="button" value="Bid" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary" name="makeBid">Bid</button>
                 </form>
             {% endif %}
         {% endif %}
