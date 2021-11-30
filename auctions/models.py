@@ -51,6 +51,9 @@ class watchlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     item = models.ForeignKey(itemToSell, on_delete=models.CASCADE)
 
+    class Meta:
+        ordering = ['item']
+
     def __str__(self):
         return f"{self.user} watching {self.item} = {self.watch}"
 

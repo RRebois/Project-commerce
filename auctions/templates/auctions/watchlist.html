@@ -1,0 +1,91 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<h2>Watchlist</h2>
+
+<h6>Active auctions</h6>
+{% for item in itemSold %}
+    {% for active in opened %}
+        {% if item.id == active.item.id %}
+            {% for watch in watches %}
+                {% if item.id == watch.item.id %}
+                    {% if watch.watch %}
+                        <ol>
+                            <div>
+                            </div>
+                            <div class="grid">
+                                <div class="gridLeft parent d-none d-lg-block">
+                                    {% if watch.item.image_url %}
+                                        <img src="{{ watch.item.image_url }}">
+                                    {% endif %}
+                                </div>
+                                <div class="gridMid d-none d-lg-block"></div>
+                                <div class="gridRight">
+                                    <span class="titleSpan"><strong><a href="{% url 'itemPage' item.id item.title %}">
+                                        <img src="/static/auctions/images/fire.jpeg" alt="fire" width="20px"> 
+                                        {{watch.item.title}}</a></strong></span>
+                                    <span class="descriptionSpan">{{watch.item.description}}</span>
+                                    <span class="priceSpan">Starting price: {{list.bid.price}}</span>
+                                    <span class="currentPrice">
+                                    {% if list.bid.current %}
+                                        current price: {{list.bid.current}}
+                                    {% else %}
+                                        Nobody bid on this article yet. 
+                                    {% endif %}
+                                    </span>
+                                    <span class="foottext"><i>auction created on {{list.item.date_created}} by {{list.item.user}}</i>
+                                    </span>
+                                </div>
+                            </div>
+                        </ol>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+{% endfor %}
+<hr class="new4">
+<h6>Closed auctions</h6>
+{% for item in itemSold %}
+    {% for close in closed %}
+        {% if item.id == close.item.id %}
+            {% for watch in watches %}
+                {% if item.id == watch.item.id %}
+                    {% if watch.watch %}
+                        <ol>
+                            <div>
+                            </div>
+                            <div class="grid">
+                                <div class="gridLeft parent d-none d-lg-block">
+                                    {% if watch.item.image_url %}
+                                        <img src="{{ watch.item.image_url }}">
+                                    {% endif %}
+                                </div>
+                                <div class="gridMid d-none d-lg-block"></div>
+                                <div class="gridRight">
+                                    <span class="titleSpan"><strong><a href="{% url 'itemPage' item.id item.title %}">
+                                        <img src="/static/auctions/images/fire.jpeg" alt="fire" width="20px"> 
+                                        {{watch.item.title}}</a></strong></span>
+                                    <span class="descriptionSpan">{{watch.item.description}}</span>
+                                    <span class="priceSpan">Starting price: {{list.bid.price}}</span>
+                                    <span class="currentPrice">
+                                    {% if list.bid.current %}
+                                        current price: {{list.bid.current}}
+                                    {% else %}
+                                        Nobody bid on this article yet. 
+                                    {% endif %}
+                                    </span>
+                                    <span class="foottext"><i>auction created on {{list.item.date_created}} by {{list.item.user}}</i>
+                                    </span>
+                                </div>
+                            </div>
+                        </ol>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+{% endfor %}
+
+{% endblock %}

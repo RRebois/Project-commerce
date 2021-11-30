@@ -28,7 +28,7 @@
                         <div class="gridMid d-none d-lg-block"></div>
                         <div class="gridRight">
                             <span class="titleSpan"><strong><a href="{% url 'itemPage' list.item.id list.item.title %}">
-                                <img src="static/auctions/images/fire.jpeg" alt="fire" width="20px"> 
+                                <img src="/static/auctions/images/fire.jpeg" alt="fire" width="20px"> 
                                 {{list.item.title}}</a></strong></span>
                             <span class="descriptionSpan">{{list.item.description}}</span>
                             <span class="priceSpan">Starting price: {{list.bid.price}}</span>
@@ -95,7 +95,7 @@
                 <ol>
                     <div>
                         <div class="grid">
-                            <img src="static/auctions/images/blur.jpeg" height="100%" alt="blur" class="imageBlur">
+                            <img src="/static/auctions/images/blur.jpeg" height="100%" alt="blur" class="imageBlur">
                             <div class="gridLeft parent d-none d-lg-block">
                                 {% if list.item.image_url %}
                                     <img src="{{ list.item.image_url }}">
@@ -103,7 +103,7 @@
                             </div>
                             <div class="gridMid d-none d-lg-block"></div>
                             <div class="gridRight">
-                                <span class="titleSpan"><strong><img src="static/auctions/images/fire.jpeg" alt="fire" width="20px"> 
+                                <span class="titleSpan"><strong><img src="/static/auctions/images/fire.jpeg" alt="fire" width="20px"> 
                                     {{list.item.title}}</strong></span>
                                 <span class="descriptionSpan2">To see more about this hot deal, please register to the website for <strong>free</strong></span>
                                 <span class="priceSpan2">Starting price: ??</span>

@@ -54,60 +54,76 @@
 
     <div class="box">
         {% if bid.userSelling == request.user %}
-            {% if bid.current%}
-                Great news, someone bid on your item! Feel free to close the auction whenever you want to claim your money.</br>
-                initial price: <h5>{{bid.price}}</h5>
-                Current price: <h5>{{bid.current}}</h5>
-                {% if listing.active == True %}
+            {% if bid.current %}
+                {% if listing.active %}
+                    Great news, someone bid on your item! Feel free to close the auction whenever you want to claim your money.</br>
+                    initial price: <h5>{{bid.price}}</h5>
+                    Current price: <h5>{{bid.current}}</h5>
                     <form action="{% url 'itemPage' item.id item.title%}" method="POST">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-primary" name="close">Close auction</button>
                     </form>
+                {% else %}
+                    Your sold this item. Auction closed.
                 {% endif %}
             {% else %}
-                No bid on your auction so far. Be patient, someone might be interested in your item in the future! 
-                <h4>initial price: {{bid.price}}</h4>
-                {% if listing.active == True %}
+                {% if listing.active %}
+                    No bid on your auction so far. Be patient, someone might be interested in your item in the future! 
+                    <h4>initial price: {{bid.price}}</h4>
                     <form action="{% url 'itemPage' item.id item.title%}" method="POST">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-primary" name="close">Close auction</button>
                     </form>
+                {% else %}
+                    Your did not sell this item. Auction closed.
                 {% endif %}
             {% endif %}
         {% elif bid.userWinning == request.user %}
-                <h4>Current price: <strong>{{bid.current}}</strong></h4>
-                {{bid.count}} bid(s) so far. Your bid is the current bid.
-                <form action="{% url 'itemPage' item.id item.title%}" method="POST">
-                    {% csrf_token %}
-                    {% for field in bidForm%}
-                        {{field}}
-                    {% endfor %}
-                </br>
-                    <button type="submit" class="btn btn-primary" name="makeBid">Bid</button>
-                </form>
+                {% if listing.active %}
+                    <h4>Current price: <strong>{{bid.current}}</strong></h4>
+                    {{bid.count}} bid(s) so far. Your bid is the current bid.
+                    <form action="{% url 'itemPage' item.id item.title%}" method="POST">
+                        {% csrf_token %}
+                        {% for field in bidForm%}
+                            {{field}}
+                        {% endfor %}
+                    </br>
+                        <button type="submit" class="btn btn-primary" name="makeBid">Bid</button>
+                    </form>
+                {% else %}
+                    This auction is now closed and congratulations to you <strong>{{request.user}}</strong> for winning it!!!!
+                {% endif %}
         {% else %}
             {% if bid.current %}
-                <h4>Current price: <strong>{{bid.current}}</strong></h4>
-                {{bid.count}} bid(s) so far. Someone else is currently winning this bid.
-                <form action="{% url 'itemPage' item.id item.title %}" method="POST">
-                    {% csrf_token %}
-                    {% for field in bidForm%}
-                        {{field}}
-                    {% endfor %}
-                </br>
-                    <button type="submit" class="btn btn-primary" name="makeBid">Bid</button>
-                </form>
+                {% if listing.active %}
+                    <h4>Current price: <strong>{{bid.current}}</strong></h4>
+                    {{bid.count}} bid(s) so far. Someone else is currently winning this bid.
+                    <form action="{% url 'itemPage' item.id item.title %}" method="POST">
+                        {% csrf_token %}
+                        {% for field in bidForm%}
+                            {{field}}
+                        {% endfor %}
+                    </br>
+                        <button type="submit" class="btn btn-primary" name="makeBid">Bid</button>
+                    </form>
+                {% else %}
+                    This auction is now closed and someone else won it. You will be luckier next time.
+                {% endif %}
             {% else %}
-                <h4>initial price: {{bid.price}}</h4>
-                Nobody bid on this article yet. Be the first one!
-                <form action="{% url 'itemPage' item.id item.title %}" method="POST">
-                    {% csrf_token %}
-                    {% for field in bidForm%}
-                        {{field}}
-                    {% endfor %}
-                </br>
-                    <button type="submit" class="btn btn-primary" name="makeBid">Bid</button>
-                </form>
+                {% if listing.active %}
+                    <h4>initial price: {{bid.price}}</h4>
+                    Nobody bid on this article yet. Be the first one!
+                    <form action="{% url 'itemPage' item.id item.title %}" method="POST">
+                        {% csrf_token %}
+                        {% for field in bidForm%}
+                            {{field}}
+                        {% endfor %}
+                    </br>
+                        <button type="submit" class="btn btn-primary" name="makeBid">Bid</button>
+                    </form>
+                {% else %}
+                    This auction is now closed and no one won.
+                {% endif %}
             {% endif %}
         {% endif %}
     </div>
@@ -119,13 +135,18 @@
                     Listed by: {{bid.userSelling}}
                 </li>
                 {% if item.category != None %}
-                <li>
-                    Category: {{item.category}}
-                </li>
+                    <li>
+                        Category: {{item.category}}
+                    </li>
                 {% else %}
-                <li>
-                    Category: No category Listed
-                </li>
+                    <li>
+                        Category: No category Listed
+                    </li>
+                {% endif %}
+                {% if not listing.active %}
+                    <li>
+                        Won by: {{bid.userWinning}}
+                    </li>
                 {% endif %}
             </ul>
     </div>

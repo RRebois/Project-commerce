@@ -225,3 +225,39 @@ def itemPage(request, item_id, word):
         "listing": listings,
         "watch": watch
     })
+
+@login_required(login_url='login')
+def watchedItems(request, username):
+
+    # Select all items being watch for the logged user (watch='True'):
+    watchItems = watchlist.objects.filter(watch='True', user = User.objects.get(pk=request.user.id))
+    
+    # Select all active listing items:
+    opened = listing.objects.filter(active = 'True')
+
+    # Select all inactive listing items:
+    closed = listing.objects.filter(active = 'False')
+
+    # Select all items:
+    itemSold = itemToSell.objects.all()
+
+    for item in itemSold:
+        for active in opened:
+            if item.id == active.item.id:   
+                for watchItem in watchItems:
+                    if item.id == watchItem.item.id and watchItem.watch:
+                        pass 
+
+    for item in itemSold:
+        for close in closed:
+            if item.id == close.item.id:   
+                for watchItem in watchItems:
+                    if item.id == watchItem.item.id and watchItem.watch:
+                        pass  
+    
+    return render(request, "auctions/watchlist.html", {
+        "watches": watchItems,
+        "opened": opened,
+        "closed": closed,
+        "itemSold": itemSold
+    })
