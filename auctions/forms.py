@@ -14,3 +14,7 @@ class newListingForm (forms.Form):
 class bidForm (forms.Form):
     bid = forms.DecimalField(required = True, 
         widget=forms.NumberInput(attrs={'placeholder': 'bid', 'class':'form-control', 'step': 0.01, 'min':1.00, 'max':100000.00}))
+
+class addCommentForm (forms.Form):
+    comment = forms.CharField(required = True, widget=forms.Textarea(attrs={
+        'placeholder': 'Add a comment', 'class':'form-control', 'rows':'3'}))

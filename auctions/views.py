@@ -12,21 +12,18 @@ import datetime
 from .models import *
 from .forms import *
 
-def func():
-    category
-    listings = listing.objects.all().order_by('item')
-    return listings
-
 def index(request):
-    listing=func()
-    item_Not_On_Fire = itemToSell.objects.filter(onFire = 'False')
-    item_On_Fire = itemToSell.objects.filter(onFire = 'True')
-    return render(request, "auctions/index.html", {
-        "listing": listing,
-        "itemNoF": item_Not_On_Fire,
-        "itemoF": item_On_Fire
-    })
+    listings=listing.objects.filter(active='True').order_by('item')
+    itemSelected=itemToSell.objects.all()
+    itemOF=itemToSell.objects.filter(onFire='True')
+    itemNOF=itemToSell.objects.filter(onFire = 'False')
 
+    return render(request, "auctions/index.html", {
+        "listing": listings,
+        "itemSelected": itemSelected,
+        "itemOF": itemOF,
+        "itemNOF": itemNOF
+    })
 
 def login_view(request):
     if request.method == "POST":
@@ -122,8 +119,10 @@ def create(request): #login_url permet de redigirer vers une autre url, ici on r
 @login_required(login_url='login')
 def itemPage(request, item_id, word):
     if request.method == "POST":
+
         # Get the title of the listing item:
         title=itemToSell.objects.get(pk=item_id)
+
         bids = bid.objects.get(item=item_id)
 
         if 'watchlist' in request.POST:
@@ -139,6 +138,19 @@ def itemPage(request, item_id, word):
                 messages.success(request, 'Item added to watchlist.')
                 return HttpResponseRedirect(reverse("itemPage", args=(item_id, title)))
 
+        # To add a new comment:
+        if 'addComment' in request.POST:
+            # Take in the data the user submitted and save it as form
+            dataComment = addCommentForm(request.POST)
+            # Check if form data is valid (server-side)
+            if dataComment.is_valid():
+                # Isolate the task from the 'cleaned' version of form data
+                Comment = dataComment.cleaned_data["comment"]
+                print(f"{Comment}")
+                
+                # Add the comment into the database:
+                newComment = comment.objects.create(comment=Comment, user=User.objects.get(pk=request.user.id), 
+                    item=itemToSell.objects.get(pk=item_id))
 
         # To make a bid:
         if 'makeBid' in request.POST:
@@ -177,6 +189,9 @@ def itemPage(request, item_id, word):
                     bids.save()
 
                     if bids.count > 5:
+                        #newItemOF=listing.objects.get(item=itemToSell.objects.get(pk=item_id))
+                        #newItemOF.onFire ="True"
+                        #newItemOF.save()
                         title.onFire = "True"
                         title.save()
 
@@ -200,30 +215,21 @@ def itemPage(request, item_id, word):
     itemTitle=itemToSell.objects.get(pk=item_id)
     bidTitle=bid.objects.get(item=item_id)
     listings=listing.objects.get(item=item_id)
+    allCommentaries = comment.objects.filter(item=item_id)
 
     try:
         watch = watchlist.objects.get(item=itemToSell.objects.get(pk=item_id), user=User.objects.get(pk=request.user.id))
     except ObjectDoesNotExist:
         watch = watchlist.objects.create(item=itemToSell.objects.get(pk=item_id), user=User.objects.get(pk=request.user.id))
 
-    try:
-        coms=comment.objects.get(item=item_id)
-    except ObjectDoesNotExist:
-        return render(request, "auctions/itemPage.html", {
-        "item": itemTitle,
-        "bid": bidTitle,
-        "bidForm": bidForm(),
-        "listing": listings,
-        "watch": watch
-        })
-
     return render(request, "auctions/itemPage.html", {
         "item": itemTitle,
-        "comment": coms,
         "bid": bidTitle,
         "bidForm": bidForm(),
         "listing": listings,
-        "watch": watch
+        "watch": watch,
+        "comments": allCommentaries,
+        "addCommentForm": addCommentForm
     })
 
 @login_required(login_url='login')
@@ -261,3 +267,27 @@ def watchedItems(request, username):
         "closed": closed,
         "itemSold": itemSold
     })
+
+@login_required(login_url='login')
+def listingCategory(request):
+    categories=category.objects.all()
+    return render(request, "auctions/listingCategory.html", {
+        "categories": categories
+        })
+
+@login_required(login_url='login')
+def categoryPage(request, word):
+    if request.method =="POST":
+
+        #Select the category id and select all items that belong to that category
+        categorySelected=category.objects.get(category=word).id 
+        itemSelected=itemToSell.objects.filter(category=categorySelected)
+        print(f"{itemSelected}")
+        
+        #Select the listing of all objects selected before:
+        listings=listing.objects.filter(active='True').order_by('item')
+
+        return render(request, "auctions/categoryPage.html", {
+            "listing": listings,
+            "itemSelected": itemSelected
+        })

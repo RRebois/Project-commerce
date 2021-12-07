@@ -33,10 +33,10 @@ class itemToSell(models.Model):
     title = models.CharField(max_length = 128, default = "title")
     description = models.TextField(default = "description")
     date_created = models.DateTimeField(auto_now_add=True)
-    onFire = models.BooleanField(default = False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Seller")
     category = models.ForeignKey(category, on_delete=models.CASCADE, null=True, blank=True)
     image_url = models.URLField(null=True, blank=True)
+    onFire = models.BooleanField(default = False)
 
     class Meta:
         ordering = ['title']
@@ -77,7 +77,7 @@ class comment(models.Model):
         return f"comment {self.comment} on item {self.item.title} by user {self.user.username} posted on {self.datePosted}"
     
     class Meta:
-        ordering = ['datePosted']
+        ordering = ['-datePosted']
 
 class listing(models.Model):
     bid = models.ForeignKey(bid, on_delete=models.CASCADE)

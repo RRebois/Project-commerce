@@ -1,0 +1,16 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    Categories
+{% endblock %}
+
+{% block body %}
+<div class="contentBox">
+    {% for category in categories %}
+        <form action="{% url 'categoryPage' category %}" method="POST">
+            {% csrf_token %}
+                <button type="submit" class="content btn btn-primary" name="{{category}}">{{category}}</button>
+        </form>                
+    {% endfor %}    
+</div>
+{% endblock %}

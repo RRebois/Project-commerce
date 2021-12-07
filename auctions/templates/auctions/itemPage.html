@@ -151,28 +151,33 @@
             </ul>
     </div>
 
-    {% if not comment %}
+    {% if not comments %}
         <div class="box">
-            <form>
-                <textarea>Write a comment...</textarea>
-                <input type="button" value="Comment" class="btn btn-primary">
+            <form action="{% url 'itemPage' item.id item.title%}" method="POST">
+                {% csrf_token %}
+                {% for field in addCommentForm %}
+                    {{field}}
+                {% endfor %}
+                <button type="submit" class="btn btn-primary" name="addComment">Add a comment</button>
             </form>
         </div>
     {% else %}
         <div class="box">
-            <form>
-                <textarea>Write a comment...</textarea>
-                <input type="button" value="Comment" class="btn btn-primary">
+            <form action="{% url 'itemPage' item.id item.title %}" method="POST">
+                {% csrf_token %}
+                {% for field in addCommentForm %}
+                    {{field}}
+                {% endfor %}
+                <button type="submit" class="btn btn-primary" name="addComment">Add a comment</button>
             </form>
         </div>
-        {% for comment in comment %}
+        {% for comment in comments %}
             <div class="commentBox">
-                <div class="comment">
-                    {{comment.comment}}
-                </div>
-                <div class="foottext">
+                <div class="footcomment">
                     Comment posted on {{comment.datePosted}} by {{comment.user}}.
                 </div>
+                <div class="comment">{{comment.comment}} <!-- we must remove any space vetween <div class="comment and {{comment.comment}}">-->
+                </div><!-- Otherwise that space will appear in the webpage.">-->
             </div>
         {% endfor %}
     {% endif %}

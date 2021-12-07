@@ -1,4 +1,6 @@
 @charset "UTF-8";
+/*either we create individually items like $black:#000 then we can reference them as body{background: $black}
+or we create a palette like below regrouping all colors then getting a specific one with map-get*/
 body {
   padding: 10px;
   background: #ffe;
@@ -8,7 +10,7 @@ body {
   display: grid;
   grid-column-gap: 30px;
   grid-template-columns: auto 1% 60%;
-  border: 1px solid black;
+  border: 1px solid #99f;
   min-height: 250px;
   height: 350px;
   /* To have a div max size */
@@ -52,7 +54,7 @@ hr.new4 {
 
 .gridMid {
   margin: 10px;
-  border: 1px solid black;
+  border: 1px solid #000;
 }
 
 .gridRight {
@@ -60,7 +62,7 @@ hr.new4 {
   position: relative;
   /* To have a relative div so the spans inside (ex:foottext) will be easy to set wherever we want*/
   max-height: 330px;
-  border: 2px solid black;
+  border: 2px solid #000;
 }
 
 .parent img {
@@ -78,7 +80,7 @@ hr.new4 {
 
 .currentPrice2, .currentPrice, .priceSpan2, .priceSpan, .descriptionSpan2, .descriptionSpan, .titleSpan {
   /* sets the background image and allows the gradient lines in my project*/
-  background-image: linear-gradient(to left, #ffffee 20%, #ea5332 40%, #f7350a 50%, #ea5332 60%, #ffffee 80%);
+  background-image: linear-gradient(to left, #ffffee 20%, rgba(234, 83, 50, 0.7) 40%, #f7350a 50%, rgba(234, 83, 50, 0.7) 60%, #ffffee 80%);
   /*linear-gradient(to left, rgba(0, 0, 0, 1) 1%, rgba(0, 255, 255, 1) 50%, rgba(0, 0, 0, 1) 100%); */
   /* 1 or more lines with the gradient colors, space between them*/
   background-size: 100% 3px;
@@ -212,7 +214,6 @@ hr.new4 {
 .box {
   max-height: 400px;
   margin: 20px;
-  border: 3px dotted green;
   justify-content: center;
   text-align: justify;
   overflow: scroll;
@@ -227,19 +228,27 @@ hr.new4 {
 }
 
 .commentBox {
-  max-height: 350px;
+  max-height: 100px;
+  min-height: 50px;
   margin: 20px;
-  padding: 10px;
   position: relative;
+  border: 1px solid #000;
+  overflow: scroll;
+  text-overflow: ellipsis;
 }
 
 .comment {
-  overflow: scroll;
-  position: absolute;
-  top: 0;
-  left: 0;
   text-align: justify;
-  max-height: 360px;
+  width: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  padding: 10px;
+}
+
+.footcomment {
+  color: #A0A0A0;
+  font-size: 11px;
+  position: relative;
 }
 
 textarea {
@@ -247,7 +256,21 @@ textarea {
   padding: 5px;
   height: 150px;
   width: 100%;
-  background-color: #F8F8F8;
+}
+
+.contentBox {
+  display: flex;
+  flex-wrap: wrap;
+}
+.contentBox button {
+  width: 200px;
+  height: 40px;
+  text-align: center;
+  margin: 5px;
+}
+.contentBox button:hover {
+  border: 1px solid #000;
+  background-color: #198754;
 }
 
 /*# sourceMappingURL=styles.css.map */
