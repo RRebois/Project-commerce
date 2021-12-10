@@ -13,16 +13,12 @@ from .models import *
 from .forms import *
 
 def index(request):
-    listings=listing.objects.filter(active='True').order_by('item')
-    itemSelected=itemToSell.objects.all()
-    itemOF=itemToSell.objects.filter(onFire='True')
-    itemNOF=itemToSell.objects.filter(onFire = 'False')
+    listingsOF=listing.objects.filter(active='True', onFire='True').order_by('item')
+    listingsNOF=listing.objects.filter(active='True', onFire='False').order_by('item')
 
     return render(request, "auctions/index.html", {
-        "listing": listings,
-        "itemSelected": itemSelected,
-        "itemOF": itemOF,
-        "itemNOF": itemNOF
+        "listingOF": listingsOF,
+        "listingNOF": listingsNOF
     })
 
 def login_view(request):
@@ -82,6 +78,7 @@ def create(request): #login_url permet de redigirer vers une autre url, ici on r
 
         # Take in the data the user submitted and save it as form
         dataForm = newListingForm(request.POST)
+
         # Check if form data is valid (server-side)
         if dataForm.is_valid():
             # Isolate the task from the 'cleaned' version of form data
@@ -89,19 +86,37 @@ def create(request): #login_url permet de redigirer vers une autre url, ici on r
             description = dataForm.cleaned_data["description"]
             price = dataForm.cleaned_data["price"]
             username = request.user.id
-
             image_url = dataForm.cleaned_data["image_url"]
+
+            categoryAuction = request.POST["category"]
+
+            if categoryAuction == '':
+                categoryAuction = category.objects.get(pk=6)
+
+                category_id = category.objects.get(category=categoryAuction).id
+                newItem = itemToSell.objects.create(title=title, description=description, user=User.objects.get(pk=username), 
+                        category=category.objects.get(pk=category_id), image_url=image_url)
+                    #print(f"category:{category_id}")
+                #except ObjectDoesNotExist:
+                #   newItem = itemToSell.objects.create(title=title, description=description, user=User.objects.get(pk=username), 
+                #          image_url=image_url)
+                    #print(f"category:{category_id}")
+                
+                newprice = bid.objects.create(price=price, item=itemToSell.objects.get(pk=newItem.id), userSelling=User.objects.get(pk=username))
+                newListing = listing.objects.create(item=itemToSell.objects.get(pk=newItem.id), bid=bid.objects.get(pk=newprice.id))
+
+                messages.success(request, 'Your item has been successfully added to the listing.')
+                return HttpResponseRedirect(reverse("itemPage", args=(newItem.id, title)))
 
             # print(f"username:{username}")
             # Try finding the category id from the submitted form data if any selected
-            try:
-                category_id = category.objects.get(category=request.POST["category"]).id
-                newItem = itemToSell.objects.create(title=title, description=description, user=User.objects.get(pk=username), 
-                        category=category.objects.get(pk=category_id), image_url=image_url)
+            category_id = category.objects.get(category=categoryAuction).id
+            newItem = itemToSell.objects.create(title=title, description=description, user=User.objects.get(pk=username), 
+                    category=category.objects.get(pk=category_id), image_url=image_url)
                 #print(f"category:{category_id}")
-            except ObjectDoesNotExist:
-                newItem = itemToSell.objects.create(title=title, description=description, user=User.objects.get(pk=username), 
-                        image_url=image_url)
+            #except ObjectDoesNotExist:
+             #   newItem = itemToSell.objects.create(title=title, description=description, user=User.objects.get(pk=username), 
+              #          image_url=image_url)
                 #print(f"category:{category_id}")
             
             newprice = bid.objects.create(price=price, item=itemToSell.objects.get(pk=newItem.id), userSelling=User.objects.get(pk=username))
@@ -189,11 +204,11 @@ def itemPage(request, item_id, word):
                     bids.save()
 
                     if bids.count > 5:
-                        #newItemOF=listing.objects.get(item=itemToSell.objects.get(pk=item_id))
-                        #newItemOF.onFire ="True"
-                        #newItemOF.save()
-                        title.onFire = "True"
-                        title.save()
+                        newItemOF=listing.objects.get(item=itemToSell.objects.get(pk=item_id))
+                        newItemOF.onFire ="True"
+                        newItemOF.save()
+                        #title.onFire = "True"
+                        #title.save()
 
                     messages.success(request, 'Bid placed successfully. Good luck!')
                     return HttpResponseRedirect(reverse("itemPage", args=(item_id, title)))
@@ -247,20 +262,6 @@ def watchedItems(request, username):
     # Select all items:
     itemSold = itemToSell.objects.all()
 
-    for item in itemSold:
-        for active in opened:
-            if item.id == active.item.id:   
-                for watchItem in watchItems:
-                    if item.id == watchItem.item.id and watchItem.watch:
-                        pass 
-
-    for item in itemSold:
-        for close in closed:
-            if item.id == close.item.id:   
-                for watchItem in watchItems:
-                    if item.id == watchItem.item.id and watchItem.watch:
-                        pass  
-    
     return render(request, "auctions/watchlist.html", {
         "watches": watchItems,
         "opened": opened,
@@ -282,12 +283,13 @@ def categoryPage(request, word):
         #Select the category id and select all items that belong to that category
         categorySelected=category.objects.get(category=word).id 
         itemSelected=itemToSell.objects.filter(category=categorySelected)
-        print(f"{itemSelected}")
         
         #Select the listing of all objects selected before:
-        listings=listing.objects.filter(active='True').order_by('item')
+        listingsOF=listing.objects.filter(active='True', onFire='True').order_by('item')
+        listingsNOF=listing.objects.filter(active='True', onFire='False').order_by('item')
 
         return render(request, "auctions/categoryPage.html", {
-            "listing": listings,
+            "listingOF": listingsOF,
+            "listingNOF": listingsNOF,
             "itemSelected": itemSelected
         })

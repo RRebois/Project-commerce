@@ -7,10 +7,18 @@
 {% block body %}
 <div class="contentBox">
     {% for category in categories %}
-        <form action="{% url 'categoryPage' category %}" method="POST">
-            {% csrf_token %}
-                <button type="submit" class="content btn btn-primary" name="{{category}}">{{category}}</button>
-        </form>                
+        {% if category.id != 6 %}
+            <form action="{% url 'categoryPage' category %}" method="POST">
+                {% csrf_token %}
+                    <button type="submit" class="content btn btn-primary" name="{{category}}">{{category}}</button>
+            </form>  
+        {% else %} 
+            <form action="{% url 'categoryPage' category %}" method="POST">
+                {% csrf_token %}
+                    <button type="submit" class="content btn btn-primary" name={{category}}>No category</button>
+            </form> 
+        {% endif %}             
     {% endfor %}    
+                
 </div>
 {% endblock %}

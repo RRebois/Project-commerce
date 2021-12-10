@@ -23,18 +23,20 @@
                                 <div class="gridMid d-none d-lg-block"></div>
                                 <div class="gridRight">
                                     <span class="titleSpan"><strong><a href="{% url 'itemPage' item.id item.title %}">
-                                        <img src="/static/auctions/images/fire.jpeg" alt="fire" width="20px"> 
+                                        {% if active.onFire %}
+                                            <img src="/static/auctions/images/fire.jpeg" alt="fire" width="20px"> 
+                                        {% endif %}
                                         {{watch.item.title}}</a></strong></span>
                                     <span class="descriptionSpan">{{watch.item.description}}</span>
-                                    <span class="priceSpan">Starting price: {{list.bid.price}}</span>
+                                    <span class="priceSpan">Starting price: {{active.bid.price}}</span>
                                     <span class="currentPrice">
-                                    {% if list.bid.current %}
-                                        current price: {{list.bid.current}}
+                                    {% if active.bid.current %}
+                                        current price: {{active.bid.current}}
                                     {% else %}
                                         Nobody bid on this article yet. 
                                     {% endif %}
                                     </span>
-                                    <span class="foottext"><i>auction created on {{list.item.date_created}} by {{list.item.user}}</i>
+                                    <span class="foottext"><i>auction created on {{active.item.date_created}} by {{active.item.user}}</i>
                                     </span>
                                 </div>
                             </div>
@@ -65,18 +67,20 @@
                                 <div class="gridMid d-none d-lg-block"></div>
                                 <div class="gridRight">
                                     <span class="titleSpan"><strong><a href="{% url 'itemPage' item.id item.title %}">
-                                        <img src="/static/auctions/images/fire.jpeg" alt="fire" width="20px"> 
+                                        {% if close.onFire %}
+                                            <img src="/static/auctions/images/fire.jpeg" alt="fire" width="20px"> 
+                                        {% endif %}
                                         {{watch.item.title}}</a></strong></span>
                                     <span class="descriptionSpan">{{watch.item.description}}</span>
-                                    <span class="priceSpan">Starting price: {{list.bid.price}}</span>
+                                    <span class="priceSpan">Auction closed</span>
                                     <span class="currentPrice">
-                                    {% if list.bid.current %}
-                                        current price: {{list.bid.current}}
+                                    {% if close.bid.current %}
+                                        Won by <strong>{{close.bid.userWinning}}</strong> for {{close.bid.current}}.
                                     {% else %}
-                                        Nobody bid on this article yet. 
+                                        Nobody bought this article. 
                                     {% endif %}
                                     </span>
-                                    <span class="foottext"><i>auction created on {{list.item.date_created}} by {{list.item.user}}</i>
+                                    <span class="foottext"><i>auction created on {{close.item.date_created}} by {{close.item.user}}</i>
                                     </span>
                                 </div>
                             </div>

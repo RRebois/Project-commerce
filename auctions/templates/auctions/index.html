@@ -16,92 +16,72 @@
 
     <h4 class="fireColor">Auctions on Fire:</h4>
     
-    {% for list in listing %}
-        {% for item in itemOF %}
-            {% if not list.item.active %}
-       
-        <h6>None so far!</h6>
-        {% endif %}
-        
-    {% endfor %}
-{% endfor %}
-
-        {% for list in listing %}
-            {% for item in itemSelected %}
-                {% if item.id == list.item.id %}
-                    {% if item.onFire %}
-                        <ol>
-                            <div class="grid">
-                                <div class="gridLeft parent d-none d-lg-block">
-                                    {% if list.item.image_url %}
-                                        <img src="{{ list.item.image_url }}">
-                                    {% endif %}
-                                </div>
-                                <div class="gridMid d-none d-lg-block"></div>
-                                <div class="gridRight">
-                                    <span class="titleSpan"><strong><a href="{% url 'itemPage' list.item.id list.item.title %}">
-                                        <img src="/static/auctions/images/fire.jpeg" alt="fire" width="20px"> 
-                                        {{list.item.title}}</a></strong></span>
-                                    <span class="descriptionSpan">{{list.item.description}}</span>
-                                    <span class="priceSpan">Starting price: {{list.bid.price}}</span>
-                                    <span class="currentPrice">
-                                    {% if list.bid.current %}
-                                        current price: {{list.bid.current}}
-                                    {% else %}
-                                        Nobody bid on this article yet. 
-                                    {% endif %}
-                                    </span>
-                                    <span class="foottext"><i>auction created on {{list.item.date_created}} by {{list.item.user}}</i>
-                                    </span>
-                                </div>
-                            </div>
-                        </ol>
-                        <hr class="new4">
-                    {% endif %}
-                {% endif %}
-            {% endfor %}
+    {% if not listingOF %}
+        <h5>None so far!</h5>
+    {% else %}
+        {% for list in listingOF %}
+            <ol>
+                <div class="grid">
+                    <div class="gridLeft parent d-none d-lg-block">
+                        {% if list.item.image_url %}
+                            <img src="{{ list.item.image_url }}">
+                        {% endif %}
+                    </div>
+                    <div class="gridMid d-none d-lg-block"></div>
+                    <div class="gridRight">
+                        <span class="titleSpan"><strong><a href="{% url 'itemPage' list.item.id list.item.title %}">
+                            <img src="/static/auctions/images/fire.jpeg" alt="fire" width="20px"> 
+                            {{list.item.title}}</a></strong></span>
+                        <span class="descriptionSpan">{{list.item.description}}</span>
+                        <span class="priceSpan">Starting price: {{list.bid.price}}</span>
+                        <span class="currentPrice">
+                        {% if list.bid.current %}
+                            current price: {{list.bid.current}}
+                        {% else %}
+                            Nobody bid on this article yet. 
+                        {% endif %}
+                        </span>
+                        <span class="foottext"><i>auction created on {{list.item.date_created}} by {{list.item.user}}</i>
+                        </span>
+                    </div>
+                </div>
+            </ol>
+            <hr class="new4">         
         {% endfor %}
+    {% endif %}
 
     <h4 class="fireColor">Auctions:</h4>
-    {% if not itemNOF %}
-            <h6>None so far!</h6>
-    {% endif %}
-                
-
-    {% for list in listing %}
-        {% for item in itemSelected %}
-            {% if item.id == list.item.id %}
-                {% if not item.onFire %}
-                    <ol>
-                        <div class="grid">
-                            <div class="gridLeft parent d-none d-lg-block">
-                                {% if list.item.image_url %}
-                                    <img src="{{ list.item.image_url }}">
-                                {% endif %}
-                            </div>
-                            <div class="gridMid d-none d-lg-block"></div>
-                            <div class="gridRight">
-                                <span class="titleSpan"><strong><a href="{% url 'itemPage' list.item.id list.item.title %}">
-                                    <img src="/static/auctions/images/fire.jpeg" alt="fire" width="20px"> 
-                                    {{list.item.title}}</a></strong></span>
-                                <span class="descriptionSpan">{{list.item.description}}</span>
-                                <span class="priceSpan">Starting price: {{list.bid.price}}</span>
-                                <span class="currentPrice">
-                                {% if list.bid.current %}
-                                    current price: {{list.bid.current}}
-                                {% else %}
-                                    Nobody bid on this article yet. 
-                                {% endif %}
-                                </span>
-                                <span class="foottext"><i>auction created on {{list.item.date_created}} by {{list.item.user}}</i>
-                                </span>
-                            </div>
-                        </div>
-                    </ol>
-                {% endif %}
-            {% endif %}
+    {% if not listingNOF %}
+            <h5>None so far!</h5>
+    {% else %}
+        {% for list in listingNOF %}
+            <ol>
+                <div class="grid">
+                    <div class="gridLeft parent d-none d-lg-block">
+                        {% if list.item.image_url %}
+                            <img src="{{ list.item.image_url }}">
+                        {% endif %}
+                    </div>
+                    <div class="gridMid d-none d-lg-block"></div>
+                    <div class="gridRight">
+                        <span class="titleSpan"><strong><a href="{% url 'itemPage' list.item.id list.item.title %}">
+                            {{list.item.title}}</a></strong></span>
+                        <span class="descriptionSpan">{{list.item.description}}</span>
+                        <span class="priceSpan">Starting price: {{list.bid.price}}</span>
+                        <span class="currentPrice">
+                        {% if list.bid.current %}
+                            current price: {{list.bid.current}}
+                        {% else %}
+                            Nobody bid on this article yet. 
+                        {% endif %}
+                        </span>
+                        <span class="foottext"><i>auction created on {{list.item.date_created}} by {{list.item.user}}</i>
+                        </span>
+                    </div>
+                </div>
+            </ol>
         {% endfor %}
-    {% endfor %}
+    {% endif %}
 
 {% else %}
 

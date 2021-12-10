@@ -36,7 +36,6 @@ class itemToSell(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Seller")
     category = models.ForeignKey(category, on_delete=models.CASCADE, null=True, blank=True)
     image_url = models.URLField(null=True, blank=True)
-    onFire = models.BooleanField(default = False)
 
     class Meta:
         ordering = ['title']
@@ -83,6 +82,7 @@ class listing(models.Model):
     bid = models.ForeignKey(bid, on_delete=models.CASCADE)
     item = models.ForeignKey(itemToSell, on_delete=models.CASCADE)
     active = models.BooleanField(default = True)
+    onFire = models.BooleanField(default = False)
 
     def __str__(self):
         return f"{self.item.category}, {self.item.user}, {self.item}, {self.bid}"

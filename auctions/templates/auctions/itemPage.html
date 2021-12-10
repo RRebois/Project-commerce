@@ -134,13 +134,13 @@
                 <li>
                     Listed by: {{bid.userSelling}}
                 </li>
-                {% if item.category != None %}
+                {% if item.category.id != 6 %}
                     <li>
                         Category: {{item.category}}
                     </li>
                 {% else %}
                     <li>
-                        Category: No category Listed
+                        Category: No category added
                     </li>
                 {% endif %}
                 {% if not listing.active %}

@@ -20,11 +20,12 @@
                         No category
                         </option>
                     {% for category in categories %}
-                        <option value="{{ category }}">{{ category }}</option>
+                        {% if category.id != 6 %}
+                            <option value="{{ category }}">{{ category }}</option>
+                        {% endif %}
                     {% endfor %}
                 </select>
-            <button type="submit" class="btn btn-primary">Submit</button>
-            
+            <button type="submit" class="btn btn-primary">Submit</button> 
           </form>
     </div>
 {% endblock %}
